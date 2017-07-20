@@ -1,26 +1,16 @@
-Forked from [FASText](https://github.com/MichalBusta/FASText) July 20, 2017
+## About
+Originally forked from [FASText](https://github.com/MichalBusta/FASText) July 20, 2017, which is based on paper *FASText: Efficient Unconstrained Scene Text Detector,Busta M., Neumann L., Matas J.:  ICCV 2015.*, [`pdf`](http://cmp.felk.cvut.cz/~neumalu1/neumann_iccv2015.pdf)
 
-===============
+## Installation
+Run the following
 
-Original readme below from https://github.com/MichalBusta/FASText
-
-===============
-
-# FASText
-
-### FASText: Efficient Unconstrained Scene Text Detector,Busta M., Neumann L., Matas J.:  ICCV 2015.
-  - http://cmp.felk.cvut.cz/~neumalu1/neumann_iccv2015.pdf
-
-To build a standalone library, run
+``` shell
+bash install.sh
 ```
-mkdir Release
-cd Release
-cmake -D CMAKE_BUILD_TYPE=Release ..
-make
-```
-Prerequisites:
-  - OpenCV
-  - python + numpy (optional)
+
+### Prerequisites
+- OpenCV
+- Anaconda for python2
 
 After building the executables, you can use toy examples in python:
 ```
