@@ -1,9 +1,10 @@
+Forked from [FASText](https://github.com/MichalBusta/FASText) July 20, 2017
 
-==============
+===============
 
 Original readme below from https://github.com/MichalBusta/FASText
 
-==============
+===============
 
 # FASText
 
