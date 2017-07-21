@@ -2,15 +2,20 @@
 Originally forked from [FASText](https://github.com/MichalBusta/FASText) July 20, 2017, which is based on paper *FASText: Efficient Unconstrained Scene Text Detector,Busta M., Neumann L., Matas J.:  ICCV 2015.*, [`pdf`](http://cmp.felk.cvut.cz/~neumalu1/neumann_iccv2015.pdf)
 
 ## Installation
-Run the following
+Run the following to build:
 
 ``` shell
 bash install.sh
 ```
 
+Test segmentation:
+``` shell
+python tools/segmentation.py sample/arnie.jpg
+```
+
 ### Prerequisites
 - OpenCV
-- Anaconda for python2
+- Anaconda for python2 (recommended)
 
 After building the executables, you can use toy examples in python:
 ```

@@ -1,5 +1,6 @@
 *swp
-
+*pyc
+tags
 /Release/
 /CMakeLists.txt~
 /perf.data
