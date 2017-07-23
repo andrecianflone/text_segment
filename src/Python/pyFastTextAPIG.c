@@ -12,6 +12,8 @@
  * Machine learning for high-speed corner detection, E. Rosten and T. Drummond, ECCV 2006
  */
 
+// python extension: https://www.tutorialspoint.com/python/python_further_extensions.htm
+
 #include "pyFastTextG.h"
 
 static PyObject *FastTextError;
