@@ -77,6 +77,21 @@ class FASTex(object):
         return ftext.getImageScales()
 
     def getDetectionStat(self):
+      '''
+      Returns numpy with columns:
+        keypointsCount;
+        keypointsTime;
+        segmentationTime;
+        classificationTime;
+        rawClsTime;
+        textLineTime;
+        wallTime;
+        classificationTimeTuples;
+        tuplesTime;
+        strokesTime;
+        gcTime;
+      '''
+
         return ftext.getDetectionStat()
 
     def getLastDetectionOrbKeypoints(self):

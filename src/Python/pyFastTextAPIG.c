@@ -13,6 +13,7 @@
  */
 
 // python extension: https://www.tutorialspoint.com/python/python_further_extensions.htm
+// and: https://docs.python.org/3.5/extending/extending.html
 
 #include "pyFastTextG.h"
 
