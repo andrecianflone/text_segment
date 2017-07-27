@@ -15,13 +15,73 @@ def settings(path):
     settings = json.load(f)
   return settings
 
-def drawCharBoxes(img, segmentations, max_boxes=200):
+def drawCharBox(img, segmentations, idx):
+  """ Draw box on array image img, using coordinates from segmentations[idx]"""
+  pt1 = (segmentations[idx][0], segmentations[idx][1])
+  pt2 = (pt1[0] + segmentations[idx][2], pt1[1] + segmentations[idx][3])
+  cv2.rectangle(img, pt1, pt2, (0, 0, 255), 1)
+
+def drawCharBoxes(img, segmentations, start_idx=0, max_boxes=None):
   """ Draw all character boxes on image """
-  for i in range(segmentations.shape[0]):
-    pt1 = (segmentations[i][0], segmentations[i][1])
-    pt2 = (pt1[0] + segmentations[i][2], pt1[1] + segmentations[i][3])
-    cv2.rectangle(img, pt1, pt2, (0, 255, 0), 1)
+  for i in range(start_idx, segmentations.shape[0]):
+    drawCharBox(img, segmentations, i)
     if max_boxes is not None and i >= max_boxes: break;
+
+def drawCharMask(img, ft, segmentations, idx):
+  """ Draw character mask on img with mask idx corresponding to character
+  from segmentations[idx]"""
+  mask = ft.getSegmentationMask(idx)
+  mask_inv = cv2.bitwise_not(mask)
+  rows, cols = mask.shape
+  x = segmentations[idx][0] # where mask starts in original image
+  y = segmentations[idx][1] # where mask starts in original image
+  roi = img[y:y+rows, x:x+cols]
+
+  # Background from original
+  bg = cv2.bitwise_and(roi,roi,mask=mask_inv)
+
+  # Foreground with color
+  fill = np.zeros((rows, cols, 3), dtype='uint8')
+  fill[:,:] = np.array([0,255,0]) # green
+  fg = cv2.bitwise_and(fill, fill, mask=mask)
+  dst = cv2.add(bg,fg)
+  img[y:y+rows, x:x+cols] = dst
+
+def drawCharMasks(img, ft, segmentations, start_idx=0, max_chars=None):
+  bg_mask = np.full((img.shape[0], img.shape[1]), 255, dtype='uint8')
+  fg_mask = np.zeros((img.shape[0], img.shape[1]), dtype='uint8')
+  for idx in range(start_idx, segmentations.shape[0]):
+    mask = ft.getSegmentationMask(idx)
+    mask_inv = cv2.bitwise_not(mask)
+    rows, cols = mask.shape
+    x = segmentations[idx][0] # where mask starts in original image
+    y = segmentations[idx][1] # where mask starts in original image
+    bg_mask[y:y+rows, x:x+cols] = mask_inv
+    fg_mask[y:y+rows, x:x+cols] = mask
+    if max_chars is not None and idx >= max_chars: break;
+
+  # Background from original
+  bg = cv2.bitwise_and(img,img,mask=bg_mask)
+
+  # Foreground with color
+  fill = np.zeros((img.shape[0],img.shape[1], 3), dtype='uint8')
+  fill[:,:] = np.array([0,255,0]) # green
+  fg = cv2.bitwise_and(fill, fill, mask=fg_mask)
+  dst = cv2.add(bg,fg)
+  img[:,:,:] = dst
+
+def viz_location(img, ft, segmentations, cumulative=False):
+  '''
+  Save char boxes and masks to debug
+  Args:
+    cumulative - if true each image includes previous masks
+  '''
+  max_chars = 100
+  for i in range(0,1001, 100):
+    drawCharMasks(img, ft, segmentations, start_idx=i, max_chars=max_chars+1)
+    drawCharBoxes(img, segmentations, start_idx=i, max_boxes=max_chars+1)
+    name = "{}/box_{}-{}.jpg".format(output_dir, i, i + max_chars)
+    cv2.imwrite(name, img)
 
 if __name__ == "__main__":
   default_img = BASE + "/sample/arnie.jpg"
@@ -40,7 +100,7 @@ if __name__ == "__main__":
 
   settings = settings("config.json")
   output_dir = settings['debug_dir']
-  ft = FASTex(edgeThreshold=13, nlevels=-1, minCompSize = 4)
+  ft = FASTex(edgeThreshold=10, nlevels=-1, minCompSize = 4)
 
   # Read image as numpy array
   img = cv2.imread(args.image, 0) # load image in grayscale, i.e. 1 channel
@@ -51,8 +111,10 @@ if __name__ == "__main__":
   # Elem in rows:: [bbox.x, bbox.y, bbox.width, bbox.height, keyPoint.pt.x, keyPoint.pt.y, octave, ?, duplicate, quality, [keypointsIds]]
   segmentations = ft.getCharSegmentations(img, output_dir, 'base')
 
-  drawCharBoxes(img3, segmentations)
-  cv2.imwrite(output_dir + "/rect2.jpg", img3)
+  viz_location(img3, ft, segmentations, cumulative=False)
+  # drawCharMasks(img3, ft, segmentations, 100)
+  # drawCharBoxes(img3, segmentations, 100)
+  # cv2.imwrite(output_dir + "/mask.jpg", img3)
 
   # Get boxes of text lines, should be a lot less than characters
   # Elem in rows [bbox.x, bbox.y, bbox.width, bbox.height, rotated rectangle points (pt1.x, pt1.y, ... pt3.y) ]

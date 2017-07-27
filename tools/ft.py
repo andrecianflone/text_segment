@@ -77,27 +77,33 @@ class FASTex(object):
         return ftext.getImageScales()
 
     def getDetectionStat(self):
-      '''
-      Returns numpy with columns:
-        keypointsCount;
-        keypointsTime;
-        segmentationTime;
-        classificationTime;
-        rawClsTime;
-        textLineTime;
-        wallTime;
-        classificationTimeTuples;
-        tuplesTime;
-        strokesTime;
-        gcTime;
-      '''
-
+        '''
+        Returns numpy with columns:
+          keypointsCount;
+          keypointsTime;
+          segmentationTime;
+          classificationTime;
+          rawClsTime;
+          textLineTime;
+          wallTime;
+          classificationTimeTuples;
+          tuplesTime;
+          strokesTime;
+          gcTime;
+        '''
         return ftext.getDetectionStat()
 
     def getLastDetectionOrbKeypoints(self):
         return ftext.getLastDetectionOrbKeypoints()
 
     def getSegmentationMask(self, maskNo):
+        '''
+        Args:
+          @param maskNo - the box id (row index) from getCharSegmentations
+        Returns:
+          returns a numpy array of size [bbox.height, bbox.width] with values 0
+          or 255
+        '''
         return ftext.getSegmentationMask(maskNo)
 
     def saveKeypints(self, keypoints, outFile):
